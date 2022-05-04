@@ -1,14 +1,14 @@
 import cv2
 
 cam_front = cv2.VideoCapture(0)
-problem_signal = False
+problem_signal = False # a signal for problem indication
 
 while True:
     # get the frame from the front camera
-    ret, front_frame = cam_front.read()
+    bool, front_frame = cam_front.read()
 
     # show the frame
-    if(ret):
+    if(bool):
         problem_signal = False
 
         cv2.imshow("Camera Input", front_frame)
@@ -21,3 +21,7 @@ while True:
     key = cv2.waitKey(1)
     if key == 27:
         break
+
+# release controls
+cam_front.release()
+cv2.destroyAllWindows()
