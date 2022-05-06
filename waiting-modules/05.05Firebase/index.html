@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="scripts/script.js" defer></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link href="style.css" rel="stylesheet" />
+    <title>PikachuTech Web Page</title>
+  </head>
+
+  <body>
+    <ul class="tabs">
+      <li data-tab-target="#home" class="active tab">Home</li>
+      <li data-tab-target="#registeredUsers" class="tab">RegisteredUsers</li>
+      <li data-tab-target="#TurnCamera" class="tab">TurnCamera</li>
+
+      <li data-tab-target="#Log" class="tab">Log</li>
+      <li data-tab-target="#Notification" class="tab">Notification</li>
+    </ul>
+    <div class="tab-content">
+      <div id="home" data-tab-content class="active">
+        <h1>Home</h1>
+
+        <label>Image Name</label><input type="text" id="imgnamebox" /><label
+          id="extLab"
+        ></label
+        ><br /><br />
+        <img id="myimg" /><label id="upprogress"></label><br /><br />
+
+        <button id="imgSelBtn">Select Image</button>
+        <button id="imgUpBtn">Upload Image</button>
+        <button id="imgDownBtn">Retrieve Image</button><br /><br />
+
+        <label>Name</label><input id="Namebox" type="text" /><br /><br />
+        <label>RollNo</label><input id="Rollbox" type="text" /><br /><br />
+        <label>Section</label><input id="Secbox" type="text" /><br /><br />
+        <label>Name</label>
+        <select id="Genbox">
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+        <hr />
+        <button id="Insbtn">INSERT</button>
+        <button id="Selbtn">SELECT</button>
+        <button id="Updbtn">UPDATE</button>
+        <button id="Delbtn">DELETE</button>
+
+        <!--- IMPORTS AN CONFIGS SEC--->
+        <script type="module" src="scripts/scriptHome.js"></script>
+      </div>
+      <div id="registeredUsers" data-tab-content>
+        <h1>Registered Users</h1>
+        <div class="container mt-3">
+          <table class="table table-dark" style = "width: 500px;">
+            <thead>
+              <th>UserNo</th>
+              <th style="width: 0px">Name</th>
+              <th style="width: 0px">Permission</th>
+              <th style="width: 0px">URL</th>
+            </thead>
+            <tbody id="tbody1"></tbody>
+          </table>
+        </div>
+        <script type="module" src="scripts/scriptRegUsers.js"></script>      
+      </div>
+      <div id="Log" data-tab-content>
+        <h1>Log</h1>
+        <div class="container mt-3">
+          <table class="table table-dark" style = "width: 500px;">
+            <thead>
+              <th >Time</th>
+              <th style="width: 0px">Name</th>
+              <th style="width: 0px">Direction</th>
+              <th style="width: 0px">URL</th>
+            </thead>
+            <tbody id="tbody2"></tbody>
+          </table>
+        </div>
+        <script type="module" src="scripts/scriptLog.js"></script>
+      </div>
+      <div id="Notification" data-tab-content>
+        <h1>Notification</h1>
+        <div class="container mt-4">
+          <table class="table table-dark" style = "width: 500px;">
+            <thead>
+              <th>Time</th>
+              <th style="width: 0px">Name</th>
+              <th style="width: 0px">Reason</th>
+              <th style="width: 0px">URL</th>
+            </thead>
+            <tbody id="tbody3"></tbody>
+          </table>
+        </div>
+        <script type="module" src="scripts/scriptNotification.js"></script>
+      </div>
+      <div id="TurnCamera" data-tab-content>
+        <h1>Turn Camera</h1>
+        <button id="turncamleftBtn">Turn Camera Left</button>
+        <button id="turncamrightBtn">Turn Camera Right</button><br /><br />
+      </div>
+    </div>
+  </body>
+</html>
