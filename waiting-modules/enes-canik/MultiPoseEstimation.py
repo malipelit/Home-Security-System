@@ -7,7 +7,6 @@ from matplotlib import pyplot as plt
 import numpy as np
 import math
 
-
 model = hub.load('https://tfhub.dev/google/movenet/multipose/lightning/1')
 movenet = model.signatures['serving_default']
 
@@ -116,7 +115,7 @@ while cap.isOpened():
         right_knee=calculate_Angle(keypoints_with_scores[i][12][:], keypoints_with_scores[i][14][:], keypoints_with_scores[i][16][:]) # Right knee
         if right_knee< 90 and left_knee<90 :
             print('The person number',i,'Crouching')
-        if right_knee< 195 and right_knee >165 and left_knee<195 and left_knee>165:
+        if right_knee< 190 and right_knee >165 and left_knee<195 and left_knee>165:
             print('The person number',i,'Standing')
         if distance==0:
             print('The person number',i,'does not exist or cannot be detected truly')
