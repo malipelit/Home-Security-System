@@ -5,6 +5,7 @@ import time
 servo_pin      = 22 # pin number assigned to the servo 
 sensor_TRIG_pin= 23 # pin number assigned to the TRIG pin of sensor 
 sensor_ECHO_pin= 24 # pin number assigned to the ECHO pin of sensor
+light_bulb_pin = 25 # pin number for light bulb
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
@@ -44,8 +45,17 @@ def getSensorData(): # in the main code, make this funct work in a while loop
         #send notification!!!
         #print anomalous on UI
     return sensor_measured_distance #it is a shared variable bw py and JS used in firebase
+def Turn_On_Off_Lights(): # should be checked in a while loop or threads
+    timeObj = time.localtime()
+    current_time = time.strftime("%H:%M:%S", timeObj)
+    if(current_time > 18.00): # may not be true 
+        GPIO.output(light_bulb_pin,True) 
+    else:
+        GPIO.output(light_bulb_pin,False) 
+
 
 #main area 
 random_angle_for_test= 5
 turnCamera(random_angle_for_test)
 random_distance_for_test=getSensorData()
+Turn_On_Off_Lights()
