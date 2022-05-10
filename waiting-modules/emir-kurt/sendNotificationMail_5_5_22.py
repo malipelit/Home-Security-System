@@ -12,9 +12,9 @@ def sendNotificationMail(mail_reason_subject,mail_reason_message):
    notf_mail.ehlo()
    notf_mail.starttls()
 
-   notf_myMailAddress = "pikachuTech2022@gmail.com"
-   notf_myPassword = "PikachuTech2022!"
-   notf_sendTo = "kurt9804@gmail.com"
+   notf_myMailAddress = "" # enter sender mail address
+   notf_myPassword = "" #enter sender mail password
+   notf_sendTo = "" # enter receiver mail address
    #notf_mail.login(notf_myMailAddress,notf_myPassword)
    #notf_mail.sendmail(notf_myMailAddress,notf_sendTo,notf_content)
    
