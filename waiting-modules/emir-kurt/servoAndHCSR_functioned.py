@@ -44,3 +44,8 @@ def getSensorData(): # in the main code, make this funct work in a while loop
         #send notification!!!
         #print anomalous on UI
     return sensor_measured_distance #it is a shared variable bw py and JS used in firebase
+
+#main area 
+random_angle_for_test= 5
+turnCamera(random_angle_for_test)
+random_distance_for_test=getSensorData()
