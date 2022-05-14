@@ -21,8 +21,8 @@
  var imgDownBtn = document.getElementById('imgDownBtn');
  var input = document.createElement('input');
  // motor code starts
- var turncamleftBtn = document.getElementById('turncamleftBtn');
- var turncamrightBtn = document.getElementById('turncamrightBtn');
+ //var turncamleftBtn = document.getElementById('turncamleftBtn');
+ //var turncamrightBtn = document.getElementById('turncamrightBtn');
  // motor code exits
  input.type ='file';
  input.onchange = e => {
@@ -210,8 +210,8 @@
  updBtn.addEventListener('click',UpdateData);
  delBtn.addEventListener('click',DeleteData);
  // motor code starts 
- turncamleftBtn.addEventListener('click',TurnLeft);
- turncamrightBtn.addEventListener('click',TurnRight);
+ //turncamleftBtn.addEventListener('click',TurnLeft);
+ //turncamrightBtn.addEventListener('click',TurnRight);
  // motor code exits
 function SaveURLtoRealTimeDB(URL){
      var name = imgNameBox.value;
