@@ -113,10 +113,16 @@ while cap.isOpened():
         distance = calculate_distance(keypoints_with_scores[i][1][:] , keypoints_with_scores[i][2][:] ,i) #distance between the left and right eye is calculated for each person
         left_knee=calculate_Angle(keypoints_with_scores[i][11][:], keypoints_with_scores[i][13][:], keypoints_with_scores[i][15][:]) # left knee
         right_knee=calculate_Angle(keypoints_with_scores[i][12][:], keypoints_with_scores[i][14][:], keypoints_with_scores[i][16][:]) # Right knee
-        if right_knee< 90 and left_knee<90 :
+        left_hip=calculate_Angle(keypoints_with_scores[i][5][:], keypoints_with_scores[i][11][:], keypoints_with_scores[i][13][:]) # left hip
+        right_hip=calculate_Angle(keypoints_with_scores[i][6][:], keypoints_with_scores[i][12][:], keypoints_with_scores[i][14][:]) # right hip
+        if right_knee< 90 and left_knee<90 and right_knee>5 and left_knee>5 :
             print('The person number',i,'Crouching')
         if right_knee< 190 and right_knee >165 and left_knee<195 and left_knee>165:
-            print('The person number',i,'Standing')
+            if (left_hip<190 and left_hip>170)  or (right_hip>170 and right_hip<190):
+                print('The person number',i,'Standing')
+            else:
+                print('The person number',i,'Leaning')
+
         if distance==0:
             print('The person number',i,'does not exist or cannot be detected truly')
         else:
