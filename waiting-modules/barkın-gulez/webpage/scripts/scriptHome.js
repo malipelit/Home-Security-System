@@ -4,14 +4,27 @@
  // https://firebase.google.com/docs/web/setup#available-libraries
 
  // Your web app's Firebase configuration
- import {db,getDatabase ,ref ,get, set , child, update, remove} from "./db.js";
+ import {db,getDatabase ,ref ,push,get, set , child, update, remove} from "./db.js";
 
  import {getStorage, ref as sRef, uploadBytesResumable, getDownloadURL} 
  from "https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js";
  
  var files = [];
  var reader = new FileReader();
- 
+
+ const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+function generateString(length) {
+    let result = ' ';
+    const charactersLength = characters.length;
+    for ( let i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return result;
+}
+
+
  var imgNameBox = document.getElementById('imgnamebox');
  var extlab = document.getElementById('extLab');
  var myimg = document.getElementById('myimg');
@@ -25,6 +38,7 @@
  //var turncamrightBtn = document.getElementById('turncamrightBtn');
  // motor code exits
  input.type ='file';
+ var address;
  input.onchange = e => {
      files = e.target.files;
      var extention = GetFileExt(files[0]);
@@ -98,22 +112,27 @@
  
  
  var namebox=document.getElementById("Namebox");
- var rollbox=document.getElementById("Rollbox");
+ var rollbox=document.getElementById("Permission");
  var secbox=document.getElementById("Secbox");
  var genbox=document.getElementById("Genbox");
- 
+
  var insBtn=document.getElementById("Insbtn");
  var selBtn =document.getElementById("Selbtn");
  var updBtn =document.getElementById("Updbtn");
  var delBtn =document.getElementById("Delbtn");
 
  function InsertData(){
-     set(ref(db,"TheStudents/"+rollbox.value),{
-         NameOfStd: namebox.value,
-         RollNo: rollbox.value,
-         Section: secbox.value,
-         Gender: genbox.value,
+     const dbref= ref;
+     address="User/"+rollbox.value+"/"+generateString(10)
+     
+     set(ref(db,"User/"+rollbox.value+"/"+namebox.value),{
+         Name: namebox.value,
+         Permission: rollbox.value,
+         URL: "",
+         //Section: secbox.value,
+         //Gender: genbox.value,
      })
+     
      .then(()=>{
          alert("data stored successfully");
 
@@ -124,11 +143,11 @@
 
 
      });
-     
+
  }
  function SelectData(){
      const dbref = ref(db);
-     get(child(dbref,"TheStudents/"+rollbox.value)).then((snapshot)=>{
+     get(child(dbref,"User/"+rollbox.value)).then((snapshot)=>{
          if(snapshot.exist()){
              namebox.value = snapshot.val().NameOfStd;
              secbox.value = snapshot.val().Section;
@@ -146,8 +165,8 @@
 
  }
  function UpdateData(){
-     update(ref(db,"TheStudents/"+rollbox.value),{
-         NameOfStd: namebox.value,
+     update(ref(db,"User/"+rollbox.value+"/"+namebox.value),{
+         Name: namebox.value,
          Section: secbox.value,
          Gender: genbox.value,
      })
@@ -165,10 +184,10 @@
 
 
  function DeleteData(){
-     remove(ref(db,"TheStudents/"+rollbox.value),{
-         NameOfStd: namebox.value,
-         Section: secbox.value,
-         Gender: genbox.value,
+     remove(ref(db,"User/"+rollbox.value+"/"+namebox.value),{
+         Name: namebox.value,
+         Permission: rollbox.value,
+         URL: ""
      })
      .then(()=>{
          alert("data removed successfully");
@@ -181,29 +200,6 @@
 
      });
  } 
- // motor code starts
- /*
-     For motor turning, we hold a global variable, motor_turn_value
-     This value is either incremented or decremented, it cannot be less than zero.
-     It cannot be higher than 6.
-     0 => 0 degree || 1 => 30 degree || ..... ||6=> 180 degree, this arrangement will be done on python 
- */
- function TurnLeft(){
-     // when clicked on this button 
-     if(motor_turn_value == 0)
-         motor_turn_value = 0;
-     else
-         motor_turn_value = motor_turn_value -1; 	
- }
- 
- function TurnRight(){
-     // when clicked on this button 
-     if(motor_turn_value == 6)
-         motor_turn_value = 6;
-     else
-         motor_turn_value = motor_turn_value + 1; 		
- }
- // motor code exits 
  
  insBtn.addEventListener('click',InsertData); 
  selBtn.addEventListener('click',SelectData);
@@ -216,9 +212,10 @@
 function SaveURLtoRealTimeDB(URL){
      var name = imgNameBox.value;
      var ext = extlab.innerHTML;
-     set (ref(db,"ImagesLinks/"+name),{
-         ImageName: (name+ext),
-         ImgUrl: URL
+     set(ref(db,"User/"+rollbox.value+"/"+namebox.value),{
+         Name: namebox.value,
+         Permission: rollbox.value,
+         URL: URL
      });
 }
 
@@ -238,5 +235,5 @@ function ValidateName(){
  var regex = /[\.#$\[\]]/
  return !(regex.test(imgNameBox.value));
 }
-imgUpBtn.onclick=UploadProcess;
+insBtn.onclick=UploadProcess;
 imgDownBtn.onclick = GetUrlFromRealTimeDB;
