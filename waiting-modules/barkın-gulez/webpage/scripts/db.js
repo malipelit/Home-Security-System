@@ -16,11 +16,11 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-import {getDatabase ,ref ,get, set , child, update, remove, onValue}
+import {getDatabase ,ref ,get, set ,push, child, update, remove, onValue}
 from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
 const db= getDatabase();
 
 import {getStorage, ref as sRef, uploadBytesResumable, getDownloadURL} 
 from "https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js";
 
-export {db,getDatabase ,ref ,get, set , child, update, remove,initializeApp,onValue, getStorage, ref as sRef, uploadBytesResumable, getDownloadURL};
+export {db,getDatabase ,ref ,get, set , child, update, push,remove,initializeApp,onValue, getStorage, ref as sRef, uploadBytesResumable, getDownloadURL};
