@@ -1,12 +1,8 @@
-from logging import root
-from cv2 import sqrt
 import tensorflow as tf
 import tensorflow_hub as hub
 import cv2
-from matplotlib import pyplot as plt
 import numpy as np
 import math
-import time
 
 model = hub.load('https://tfhub.dev/google/movenet/multipose/lightning/1')
 movenet = model.signatures['serving_default']
@@ -71,7 +67,7 @@ def calculate_Angle(landmark1, landmark2, landmark3):
     y1, x1, s1 = 1000*landmark1
     y2, x2, s2 = 1000*landmark2
     y3, x3, s3 = 1000*landmark3
-    if round(s1)<400 or round(s2)<400 or round(s3)<400:
+    if round(s1)<100 or round(s2)<100 or round(s3)<100:
         return 0
     # Calculate the angle between the three points
     angle = math.degrees(math.atan2(y3 - y2, x3 - x2) - math.atan2(y1 - y2, x1 - x2))
@@ -83,18 +79,29 @@ def calculate_Angle(landmark1, landmark2, landmark3):
         angle = 360-angle
     # Return the calculated angle.
     return angle
-def calculate_distance(left_eye,right_eye,i):
-    y1,x1,s1=1000*left_eye
-    y2,x2,s2=1000*right_eye
-    distance=sqrt((round(x2)-round(x1))^2+(round(y2)-round(y1))^2)
-    #print(s1,'s1 for the person number',i)
+def calculate_distance(left_eye,right_eye):
+    y1,x1,s1=left_eye
+    y2,x2,s2=right_eye
+    y1=int(480*y1)
+    y2=int(480*y2)
+    x1=int(640*x1)
+    x2=int(640*x2)
+    s1=int(1000*s1)
+    s2=int(1000*s2)
+
+    distance=math.sqrt(abs(x2-x1)**2+abs(y2-y1)**2)
+    #print(distance,abs(x2-x1),abs(y2-y1),'distance for the person number',i)
     #print(s2,'s2 for the person number',i)
-    if round(s1)<400 or round(s2)<400:
+    if s1<400 or s2<400:
         return 0
-    return distance[0]
+    return distance
 def So_Close(distance,i):
-    if distance>10:
-        print('Anomalous attempt to the camera is detected for the person number',i)      
+    if distance>100:
+        print('Anomalous attempt to the camera is detected for the person number',i)   
+    #if distance==0:
+    #          print('The person number',i,'does not exist or cannot be detected truly')
+    else:
+        return 
 def Face_Pic(Landmark1,Landmark2,error,frame):
     y1,x1,s1=Landmark1
     y2,x2,s2=Landmark2
@@ -102,26 +109,27 @@ def Face_Pic(Landmark1,Landmark2,error,frame):
     y2=int(y2*480)
     x1=int(x1*640)
     x2=int(x2*640)
+    s1=int(s1*1000)
+    s2=int(s2*1000)
+
     x_diff=int(abs(x1-x2))+error
     y_b=y1-x_diff #Face Pic bottom line 
     y_t=y2+x_diff #Face Pic top line 
     x_l=x1+error  #Face Pic left line 
     x_r=x2-error  #Face Pic right line
-    if x_l<0:
-        x_l=0
+    if y_b<0:
+        y_b=0    
+    if y_t>480:
+        y_t=480 
     if x_r<0:
         x_r=0    
     if x_l>640:
-        x_r=640  
-    if x_r>640:
         x_r=640          
-    print('left x position of the person=',x_l)
-    print('right x position of the person=',x_r)
-    if s1<0.4 or s2<0.4:
+    if s1<400 or s2<400:
         return 0
     else:    
         img=frame[y_b:y_t,min(x_l,x_r):max(x_l,x_r)]
-        print("img: ",len(img),",",len(img[0]))
+        #print("img: ",len(img),",",len(img[0]))
 
     return  img         
 
@@ -130,7 +138,7 @@ def Face_Pic(Landmark1,Landmark2,error,frame):
 
 
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 while cap.isOpened():
     ret, frame = cap.read()
     
@@ -144,10 +152,9 @@ while cap.isOpened():
     results = movenet(input_img)
     keypoints_with_scores = results['output_0'].numpy()[:,:,:51].reshape((6,17,3))
     i=0
-    #time.sleep(2)
     try:
         for i in range(1):
-            distance = calculate_distance(keypoints_with_scores[i][1][:] , keypoints_with_scores[i][2][:] ,i) #distance between the left and right eye is calculated for each person
+            distance = calculate_distance(keypoints_with_scores[i][1][:] , keypoints_with_scores[i][2][:]) #distance between the left and right eye is calculated for each person
             left_knee=calculate_Angle(keypoints_with_scores[i][11][:], keypoints_with_scores[i][13][:], keypoints_with_scores[i][15][:]) # left knee
             right_knee=calculate_Angle(keypoints_with_scores[i][12][:], keypoints_with_scores[i][14][:], keypoints_with_scores[i][16][:]) # Right knee
             left_hip=calculate_Angle(keypoints_with_scores[i][5][:], keypoints_with_scores[i][11][:], keypoints_with_scores[i][13][:]) # left hip
@@ -155,7 +162,7 @@ while cap.isOpened():
             Face=Face_Pic(keypoints_with_scores[i][3][:],keypoints_with_scores[i][4][:],20,frame) # Frame of the face of the Person is captured
             cv2.imshow("face"+str(i), Face)
 
-
+            So_Close(distance,i)
             if right_knee< 90 and left_knee<90 and right_knee>5 and left_knee>5 :
                 print('The person number',i,'Crouching')
             if right_knee< 190 and right_knee >165 and left_knee<195 and left_knee>165:
@@ -163,17 +170,12 @@ while cap.isOpened():
                     print('The person number',i,'Standing')
                 else:
                     print('The person number',i,'Leaning')
-
-            if distance==0:
-                print('The person number',i,'does not exist or cannot be detected truly')
-            else:
-                So_Close(distance,i)
             
             # Render keypoints 
             loop_through_people(frame, keypoints_with_scores, EDGES, 0.1)
             
             #cv2.imshow('Movenet Multipose', frame)
-            cv2.imshow('Captured Face',Face)
+            #cv2.imshow('Captured Face',Face)
     except:
         print("problem")
 
@@ -181,8 +183,6 @@ while cap.isOpened():
     if cv2.waitKey(10) & 0xFF==ord('q'):
             break
 
-    
-    
 cap.release()
 cv2.destroyAllWindows()
 
